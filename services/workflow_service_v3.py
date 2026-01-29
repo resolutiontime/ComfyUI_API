@@ -7,6 +7,7 @@ import logging
 from PIL import Image
 from io import BytesIO
 import matplotlib.pyplot as plt
+import base64
 from validation.workflow_processor import *
 
 # Настройка логирования
@@ -74,6 +75,21 @@ class LocalComfyUIClient:
         plt.axis('off')
         plt.tight_layout()
         plt.show()
+
+    async def get_image_base64(self, image: bytes) -> str:
+        """Конвертирует изображение в base64 для передачи по сети"""
+        # Если image уже bytes (например, из ComfyUI)
+        if isinstance(image, bytes):
+            img = Image.open(BytesIO(image))
+        else:
+            img = image
+
+        # Конвертируем в base64
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+        return img_str
 
     async def get_image_from_history(self, history_data: Dict[str, Any]) -> Optional[str]:
         """Извлекает имя файла изображения из данных истории"""
@@ -210,13 +226,56 @@ class LocalComfyUIClient:
 
         return img
 
+
+    async def execute_workflow2(
+            self,
+            timeout: float = 300.0,
+            params: dict = None
+    ) -> Dict[str, Any]:
+
+        process_name = ProcessType.PORTRAIT
+        path_mngr = WorkflowPathManager(base_dir='../workflows')
+        workflow = path_mngr.load_workflow(process_name)
+
+        # Обрабатываем workflow
+        processed_workflow = WorkflowFactory.process(
+            process_type=process_name,
+            params=params,
+            workflow_template=workflow
+        )
+
+        # Отправляем промпт
+        prompt_id = await self.queue_prompt(processed_workflow)
+
+        # Ожидаем завершения
+        outputs = await self.wait_for_completion(
+            prompt_id,
+            timeout,
+        )
+
+        filename, subfolder = await self.get_image_from_history(outputs)
+        img = await self.get_image(filename, subfolder)
+
+        return await self.get_image_base64(img)
+
 if __name__ == '__main__':
     client = LocalComfyUIClient()
 
-    process = ProcessType.PORTRAIT
-    path_mngr = WorkflowPathManager(base_dir='../workflows')
-    workflow = path_mngr.load_workflow(process)
+    # process = ProcessType.PORTRAIT
+    # path_mngr = WorkflowPathManager(base_dir='../workflows')
+    # workflow = path_mngr.load_workflow(process)
+    #
+    # img = asyncio.run(client.execute_workflow(workflow, 20))
+    # asyncio.run(client.display_image(img))
 
-    img = asyncio.run(client.execute_workflow(workflow, 20))
-    asyncio.run(client.display_image(img))
+    # Создаем параметры
+    params = {
+        "width": 896,
+        "height": 1216,
+        #         "cfg": 3,
+        # "steps": 15,
+        "prompt": "open mouth",
+        "seed": 46
+    }
 
+    asyncio.run(client.execute_workflow2(params=params, timeout=12))
