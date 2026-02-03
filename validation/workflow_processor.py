@@ -6,16 +6,10 @@ class WorkflowProcessor:
         self.base_workflow = base_workflow
         self.node_mapping = NodeMapping()
 
-    def process_portrait(self, params: PortraitParams) -> Dict[str, Any]:
-        """Обработка workflow для генерации портрета"""
-        workflow = self._deep_copy_workflow()
-        mapping = self.node_mapping.get_mapping(ProcessType.PORTRAIT)
-        return self._apply_params_to_workflow(workflow, params, mapping)
-
-    def process_pose(self, params: PoseParams) -> Dict[str, Any]:
+    def process(self, params, process_type: ProcessType) -> Dict[str, Any]:
         """Обработка workflow для генерации позы"""
         workflow = self._deep_copy_workflow()
-        mapping = self.node_mapping.get_mapping(ProcessType.POSE)
+        mapping = self.node_mapping.get_mapping(process_type)
         return self._apply_params_to_workflow(workflow, params, mapping)
 
     def _apply_params_to_workflow(
@@ -26,9 +20,11 @@ class WorkflowProcessor:
     ) -> Dict[str, Any]:
         """Применение параметров к workflow через маппинг"""
 
-        param_dict = params.dict()
+        param_dict = params.model_dump()
 
         for param_name, node_info in mapping.items():
+            if param_name == "save_node_id" or "node_id" not in node_info:
+                continue
             if param_name in param_dict and param_dict[param_name] is not None:
                 node_id = str(node_info["node_id"])
                 input_name = node_info["input_name"]
@@ -69,19 +65,25 @@ class WorkflowFactory:
         # Создаем соответствующую модель параметров
         if process_type == ProcessType.PORTRAIT:
             validated_params = PortraitParams(**params)
-            return processor.process_portrait(validated_params)
+            return processor.process(validated_params, process_type)
         elif process_type == ProcessType.POSE:
             validated_params = PoseParams(**params)
-            return processor.process_pose(validated_params)
+            return processor.process(validated_params, process_type)
+        elif process_type == ProcessType.POSE_DT:
+            validated_params = PoseParams(**params)
+            return processor.process(validated_params, process_type)
+        elif process_type == ProcessType.PORTRAIT_DT:
+            validated_params = PortraitParams(**params)
+            return processor.process(validated_params, process_type)
         else:
             raise ValueError(f"Unknown process type: {process_type}")
 
 
 if __name__ == '__main__':
     print("It`s 'workflow_manager.py'")
-    process = ProcessType.PORTRAIT
+    process = ProcessType.POSE_DT
 
-    path_mngr = WorkflowPathManager()
+    path_mngr = WorkflowPathManager(base_dir='../workflows')
     workflow = path_mngr.load_workflow(process)
 
 
@@ -89,7 +91,7 @@ if __name__ == '__main__':
     portrait_params = {
         "width": 896,
         "height": 1216,
-        #         "cfg": 3,
+        "cfg": 4,
         #         "steps": 20,
         "prompt": "beautiful portrait of a woman",
         "seed": 42

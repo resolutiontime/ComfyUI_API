@@ -1,0 +1,1921 @@
+{
+  "131": {
+    "inputs": {
+      "ckpt_name": "Pony\\cyberrealistic\\v160.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Загрузить сheckpoint"
+    }
+  },
+  "142": {
+    "inputs": {
+      "images": [
+        "63:78",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Предварительный просмотр изображения"
+    }
+  },
+  "193": {
+    "inputs": {
+      "text": "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up,\nCommon describe:\n1girl, solo, highly detailed photo of a young 22-year-old seductive girl, \nhair bun, tied in a bun,\nlong wavy raven-black hair cascading over her shoulders\nBody:\nwith hourglass figure, toned athletic build, clear skin,\nBreast size 2 breasts, narrow waist, wide hips, long slender legs, smooth flawless skin, elegant posture highly detailed anatomy, realistic proportions, alluring and voluptuous body,\nDress:\nBLACK Panties, naked tits, without bra,\nPose:\nclose-up portrait, off-shoulde, sitting on executive desk, crossing legs, dynamic pose, looking at viewer\n"
+    },
+    "class_type": "ttN text",
+    "_meta": {
+      "title": "Positive"
+    }
+  },
+  "194": {
+    "inputs": {
+      "value": 897
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "Width"
+    }
+  },
+  "195": {
+    "inputs": {
+      "value": 1216
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "Height"
+    }
+  },
+  "196": {
+    "inputs": {
+      "value": 4
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "CFG"
+    }
+  },
+  "197": {
+    "inputs": {
+      "value": 25
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "STEPS"
+    }
+  },
+  "198": {
+    "inputs": {
+      "seed": 162
+    },
+    "class_type": "ttN seed",
+    "_meta": {
+      "title": "seed"
+    }
+  },
+  "199": {
+    "inputs": {
+      "text": "score_4, score_5, score_6, (shaved head:1.5), (curly hair:1.5), (curly hairstyle:1.5), (cleavage:1.5), (exposed breasts:1.5), (long neck:1.5),\nfutanari, extra fingers, distorted hands, distorted fingers, deformed face, deformed hands, deformed fingers, poorly drawn face, poorly drawn hands, poorly drawn feet, bad anatomy, exaggerated anatomy, exaggerated limbs, exaggerated pose, long neck, twisted, symmetrical, mixed characters, low quality, lowres, low-resolution, worst quality, blurry, blur, distorted, distortion, bad, messy, old, sketch, draft, beginner, fake, hyper, glossy, aliasing, moir pattern, compression artifacts, jpeg artifacts, downsampling, pixelated, glitch, grainy, kitsch, black and white, lineless, censored, text, signature, watermark, logo, easynegative, multiple girls, 2girls, 3girls, group, duo, couple, extra people, extra limbs, additional characters, other humans"
+    },
+    "class_type": "ttN text",
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "204": {
+    "inputs": {
+      "pipe": [
+        "145:132",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "205": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "Pony\\Crazy Girlfriend Mix.safetensors",
+        "strength": 0.7
+      },
+      "lora_2": {
+        "on": true,
+        "lora": "Pony\\Real_Beauty.safetensors",
+        "strength": 0.6
+      },
+      "lora_3": {
+        "on": true,
+        "lora": "Pony\\Cartoon\\ExpressiveH (Hentai LoRa Style).safetensors",
+        "strength": 1.4
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "204",
+        1
+      ],
+      "clip": [
+        "204",
+        6
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "206": {
+    "inputs": {
+      "pipe": [
+        "204",
+        0
+      ],
+      "model": [
+        "205",
+        0
+      ],
+      "clip": [
+        "205",
+        1
+      ]
+    },
+    "class_type": "easy pipeIn",
+    "_meta": {
+      "title": "Pipe In"
+    }
+  },
+  "209": {
+    "inputs": {
+      "expression": "max(a,b,c)",
+      "a": [
+        "200:141:2",
+        0
+      ],
+      "b": [
+        "200:142:2",
+        0
+      ],
+      "c": [
+        "224:2",
+        0
+      ]
+    },
+    "class_type": "MathExpression|pysssss",
+    "_meta": {
+      "title": "max (Width x Height)"
+    }
+  },
+  "226": {
+    "inputs": {
+      "value": 0
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "Int"
+    }
+  },
+  "235": {
+    "inputs": {
+      "expression": "max(a,b)",
+      "a": [
+        "170:141:2",
+        0
+      ],
+      "b": [
+        "170:142:2",
+        0
+      ]
+    },
+    "class_type": "MathExpression|pysssss",
+    "_meta": {
+      "title": "max (Width x Height)"
+    }
+  },
+  "240": {
+    "inputs": {
+      "sampler_name": "dpmpp_2m_sde"
+    },
+    "class_type": "Sampler Selector (Image Saver)",
+    "_meta": {
+      "title": "Sampler Selector (Image Saver)"
+    }
+  },
+  "241": {
+    "inputs": {
+      "choice": "karras",
+      "option0": "karras",
+      "option1": "simple",
+      "option2": "normal",
+      "option3": ""
+    },
+    "class_type": "CustomCombo",
+    "_meta": {
+      "title": "Scheduler selector"
+    }
+  },
+  "244": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "subdirectory_name": "FACE",
+      "output_format": "png",
+      "quality": "max",
+      "metadata_scope": "full",
+      "include_batch_num": true,
+      "prefer_nearest": true,
+      "images": [
+        "147:78",
+        0
+      ]
+    },
+    "class_type": "SaveImageWithMetaData",
+    "_meta": {
+      "title": "Save portrait"
+    }
+  },
+  "145:132": {
+    "inputs": {
+      "model": [
+        "131",
+        0
+      ],
+      "pos": [
+        "145:146",
+        0
+      ],
+      "neg": [
+        "145:147",
+        0
+      ],
+      "vae": [
+        "131",
+        2
+      ],
+      "clip": [
+        "131",
+        1
+      ]
+    },
+    "class_type": "easy pipeIn",
+    "_meta": {
+      "title": "Com_pipline"
+    }
+  },
+  "145:145": {
+    "inputs": {
+      "stop_at_clip_layer": -2,
+      "clip": [
+        "131",
+        1
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "Установить последний слой CLIP"
+    }
+  },
+  "145:146": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "145:145",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Кодирование текста CLIP"
+    }
+  },
+  "145:147": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "145:145",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Кодирование текста CLIP (Запрос)"
+    }
+  },
+  "224:2": {
+    "inputs": {
+      "boolean": [
+        "224:1",
+        1
+      ],
+      "on_true": [
+        "224:1",
+        0
+      ],
+      "on_false": [
+        "226",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "224:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "224:8": {
+    "inputs": {
+      "preview": "False",
+      "previewMode": null,
+      "source": [
+        "224:1",
+        1
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "Предпросмотр любого"
+    }
+  },
+  "170:79": {
+    "inputs": {
+      "value": 25
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "STEPS"
+    }
+  },
+  "170:83": {
+    "inputs": {
+      "value": 4
+    },
+    "class_type": "PrimitiveFloat",
+    "_meta": {
+      "title": "CFG"
+    }
+  },
+  "170:138": {
+    "inputs": {
+      "value": [
+        "170:142:2",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "IMG_height"
+    }
+  },
+  "170:137": {
+    "inputs": {
+      "value": [
+        "170:141:2",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "IMG_width"
+    }
+  },
+  "170:77": {
+    "inputs": {
+      "text": "score_6, score_5, score_4, ugly, deformed, mutated, extra limbs, bad anatomy, blurry, low quality, artifacts, text, watermark, overexposed, underexposed, asymmetrical face, multiple faces"
+    },
+    "class_type": "ttN text",
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "170:136": {
+    "inputs": {
+      "width": [
+        "170:137",
+        0
+      ],
+      "height": [
+        "170:138",
+        0
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Пустое латентное изображение"
+    }
+  },
+  "170:152": {
+    "inputs": {
+      "model": [
+        "170:153",
+        1
+      ],
+      "pos": [
+        "170:145:133",
+        0
+      ],
+      "neg": [
+        "170:145:134",
+        0
+      ],
+      "latent": [
+        "170:136",
+        0
+      ],
+      "vae": [
+        "170:153",
+        5
+      ],
+      "clip": [
+        "170:153",
+        6
+      ]
+    },
+    "class_type": "easy pipeIn",
+    "_meta": {
+      "title": "Pipe In"
+    }
+  },
+  "170:145:133": {
+    "inputs": {
+      "text": [
+        "170:146:2",
+        0
+      ],
+      "clip": [
+        "170:145:135",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Кодирование текста CLIP"
+    }
+  },
+  "170:145:134": {
+    "inputs": {
+      "text": [
+        "170:147:2",
+        0
+      ],
+      "clip": [
+        "170:145:135",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Кодирование текста CLIP (Запрос)"
+    }
+  },
+  "170:145:135": {
+    "inputs": {
+      "stop_at_clip_layer": -2,
+      "clip": [
+        "170:153",
+        6
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "Установить последний слой CLIP"
+    }
+  },
+  "170:159": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "Pony\\Crazy Girlfriend Mix.safetensors",
+        "strength": 0.7
+      },
+      "lora_2": {
+        "on": true,
+        "lora": "Pony\\Real_Beauty.safetensors",
+        "strength": 0.6
+      },
+      "lora_3": {
+        "on": true,
+        "lora": "Pony\\Cartoon\\ExpressiveH (Hentai LoRa Style).safetensors",
+        "strength": 1.4
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "170:160",
+        1
+      ],
+      "clip": [
+        "170:160",
+        6
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "170:158": {
+    "inputs": {
+      "pipe": [
+        "170:160",
+        0
+      ],
+      "model": [
+        "170:159",
+        0
+      ],
+      "vae": [
+        "170:160",
+        5
+      ],
+      "clip": [
+        "170:159",
+        1
+      ]
+    },
+    "class_type": "easy pipeIn",
+    "_meta": {
+      "title": "Pipe In"
+    }
+  },
+  "170:160": {
+    "inputs": {
+      "pipe": [
+        "145:132",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "170:76": {
+    "inputs": {
+      "text": "score_9, score_8_up, score_7_up, source_realistic, BREAK close-up portrait of a very beautiful young Russian female, age 20, flawless porcelain skin, symmetric delicate face, large expressive almond-shaped brown eyes with long lashes, subtle eyeliner, thin arched eyebrows, small straight nose, full pink lips with slight smile, high cheekbones, soft blush, long straight black hair framing the face, highly detailed facial features, photorealistic, hyperrealistic, no background, face only in frame, no neck or shoulders visible, no accessories, no other elements"
+    },
+    "class_type": "ttN text",
+    "_meta": {
+      "title": "Positive"
+    }
+  },
+  "170:153": {
+    "inputs": {
+      "pipe": [
+        "170:154:2",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "170:82": {
+    "inputs": {
+      "value": 162
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "170:71": {
+    "inputs": {
+      "value": 1216
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "IMG_height"
+    }
+  },
+  "170:70": {
+    "inputs": {
+      "value": 896
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "IMG_width"
+    }
+  },
+  "170:161": {
+    "inputs": {
+      "choice": "karras",
+      "option0": "karras",
+      "option1": "simple",
+      "option2": "normal",
+      "option3": ""
+    },
+    "class_type": "CustomCombo",
+    "_meta": {
+      "title": "Scheduler selector"
+    }
+  },
+  "170:163:2": {
+    "inputs": {
+      "boolean": [
+        "170:163:1",
+        1
+      ],
+      "on_true": [
+        "170:163:1",
+        0
+      ],
+      "on_false": [
+        "170:85",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:163:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:162": {
+    "inputs": {
+      "string": [
+        "170:161",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "170:165": {
+    "inputs": {},
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "170:154:2": {
+    "inputs": {
+      "boolean": [
+        "170:154:1",
+        1
+      ],
+      "on_true": [
+        "170:154:1",
+        0
+      ],
+      "on_false": [
+        "170:158",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:154:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:154:8": {
+    "inputs": {
+      "preview": "False",
+      "previewMode": null,
+      "source": [
+        "170:154:1",
+        1
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "Предпросмотр любого"
+    }
+  },
+  "170:85": {
+    "inputs": {
+      "sampler_name": "dpmpp_2m_sde"
+    },
+    "class_type": "Sampler Selector (Image Saver)",
+    "_meta": {
+      "title": "Sampler Selector (Image Saver)"
+    }
+  },
+  "170:164:2": {
+    "inputs": {
+      "boolean": [
+        "170:164:1",
+        1
+      ],
+      "on_true": [
+        "170:164:1",
+        0
+      ],
+      "on_false": [
+        "170:162",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:164:1": {
+    "inputs": {
+      "signal": [
+        "170:165",
+        0
+      ],
+      "any_input": [
+        "170:165",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:146:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:146:2": {
+    "inputs": {
+      "boolean": [
+        "170:146:1",
+        1
+      ],
+      "on_true": [
+        "170:146:1",
+        0
+      ],
+      "on_false": [
+        "170:76",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:147:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:147:2": {
+    "inputs": {
+      "boolean": [
+        "170:147:1",
+        1
+      ],
+      "on_true": [
+        "170:147:1",
+        0
+      ],
+      "on_false": [
+        "170:77",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:143:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:143:2": {
+    "inputs": {
+      "boolean": [
+        "170:143:1",
+        1
+      ],
+      "on_true": [
+        "170:143:1",
+        0
+      ],
+      "on_false": [
+        "170:83",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:144:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:144:2": {
+    "inputs": {
+      "boolean": [
+        "170:144:1",
+        1
+      ],
+      "on_true": [
+        "170:144:1",
+        0
+      ],
+      "on_false": [
+        "170:79",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:142:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:142:2": {
+    "inputs": {
+      "boolean": [
+        "170:142:1",
+        1
+      ],
+      "on_true": [
+        "170:142:1",
+        0
+      ],
+      "on_false": [
+        "170:71",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:141:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "170:141:2": {
+    "inputs": {
+      "boolean": [
+        "170:141:1",
+        1
+      ],
+      "on_true": [
+        "170:141:1",
+        0
+      ],
+      "on_false": [
+        "170:70",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:140:2": {
+    "inputs": {
+      "boolean": [
+        "170:140:1",
+        1
+      ],
+      "on_true": [
+        "170:140:1",
+        0
+      ],
+      "on_false": [
+        "170:82",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "170:140:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:82": {
+    "inputs": {
+      "value": 162
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "200:70": {
+    "inputs": {
+      "value": 896
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "IMG_width"
+    }
+  },
+  "200:144:1": {
+    "inputs": {
+      "signal": [
+        "197",
+        0
+      ],
+      "any_input": [
+        "197",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:144:2": {
+    "inputs": {
+      "boolean": [
+        "200:144:1",
+        1
+      ],
+      "on_true": [
+        "200:144:1",
+        0
+      ],
+      "on_false": [
+        "200:79",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:79": {
+    "inputs": {
+      "value": 25
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "STEPS"
+    }
+  },
+  "200:71": {
+    "inputs": {
+      "value": 1216
+    },
+    "class_type": "easy int",
+    "_meta": {
+      "title": "IMG_height"
+    }
+  },
+  "200:83": {
+    "inputs": {
+      "value": 4
+    },
+    "class_type": "PrimitiveFloat",
+    "_meta": {
+      "title": "CFG"
+    }
+  },
+  "200:142:1": {
+    "inputs": {
+      "signal": [
+        "195",
+        0
+      ],
+      "any_input": [
+        "195",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:142:2": {
+    "inputs": {
+      "boolean": [
+        "200:142:1",
+        1
+      ],
+      "on_true": [
+        "200:142:1",
+        0
+      ],
+      "on_false": [
+        "200:71",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:141:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:141:2": {
+    "inputs": {
+      "boolean": [
+        "200:141:1",
+        1
+      ],
+      "on_true": [
+        "200:141:1",
+        0
+      ],
+      "on_false": [
+        "200:70",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:138": {
+    "inputs": {
+      "value": [
+        "200:142:2",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "IMG_height"
+    }
+  },
+  "200:137": {
+    "inputs": {
+      "value": [
+        "200:141:2",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "IMG_width"
+    }
+  },
+  "200:146:1": {
+    "inputs": {
+      "signal": [
+        "193",
+        0
+      ],
+      "any_input": [
+        "193",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:146:2": {
+    "inputs": {
+      "boolean": [
+        "200:146:1",
+        1
+      ],
+      "on_true": [
+        "200:146:1",
+        0
+      ],
+      "on_false": [
+        "200:76",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:147:1": {
+    "inputs": {
+      "signal": [
+        "199",
+        0
+      ],
+      "any_input": [
+        "199",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:147:2": {
+    "inputs": {
+      "boolean": [
+        "200:147:1",
+        1
+      ],
+      "on_true": [
+        "200:147:1",
+        0
+      ],
+      "on_false": [
+        "200:77",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:143:1": {
+    "inputs": {
+      "signal": [
+        "196",
+        0
+      ],
+      "any_input": [
+        "196",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:143:2": {
+    "inputs": {
+      "boolean": [
+        "200:143:1",
+        1
+      ],
+      "on_true": [
+        "200:143:1",
+        0
+      ],
+      "on_false": [
+        "200:83",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:136": {
+    "inputs": {
+      "width": [
+        "200:137",
+        0
+      ],
+      "height": [
+        "200:138",
+        0
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Пустое латентное изображение"
+    }
+  },
+  "200:152": {
+    "inputs": {
+      "model": [
+        "200:153",
+        1
+      ],
+      "pos": [
+        "200:145:133",
+        0
+      ],
+      "neg": [
+        "200:145:134",
+        0
+      ],
+      "latent": [
+        "200:136",
+        0
+      ],
+      "vae": [
+        "200:153",
+        5
+      ],
+      "clip": [
+        "200:153",
+        6
+      ]
+    },
+    "class_type": "easy pipeIn",
+    "_meta": {
+      "title": "Pipe In"
+    }
+  },
+  "200:145:133": {
+    "inputs": {
+      "text": [
+        "200:146:2",
+        0
+      ],
+      "clip": [
+        "200:145:135",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Кодирование текста CLIP"
+    }
+  },
+  "200:145:134": {
+    "inputs": {
+      "text": [
+        "200:147:2",
+        0
+      ],
+      "clip": [
+        "200:145:135",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Кодирование текста CLIP (Запрос)"
+    }
+  },
+  "200:145:135": {
+    "inputs": {
+      "stop_at_clip_layer": -2,
+      "clip": [
+        "200:153",
+        6
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "Установить последний слой CLIP"
+    }
+  },
+  "200:159": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": true,
+        "lora": "Pony\\Crazy Girlfriend Mix.safetensors",
+        "strength": 0.7
+      },
+      "lora_2": {
+        "on": true,
+        "lora": "Pony\\Real_Beauty.safetensors",
+        "strength": 0.6
+      },
+      "lora_3": {
+        "on": true,
+        "lora": "Pony\\Cartoon\\ExpressiveH (Hentai LoRa Style).safetensors",
+        "strength": 1.4
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "200:160",
+        1
+      ],
+      "clip": [
+        "200:160",
+        6
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "200:76": {
+    "inputs": {
+      "text": "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up,\nCommon describe:\n1girl, solo, highly detailed photo of a young 22-year-old seductive girl, \nhair bun, tied in a bun,\nlong wavy raven-black hair cascading over her shoulders\nBody:\nwith hourglass figure, toned athletic build, clear skin,\nBreast size 2 breasts, narrow waist, wide hips, long slender legs, smooth flawless skin, elegant posture highly detailed anatomy, realistic proportions, alluring and voluptuous body,\nDress:\nBLACK Panties, naked tits, without bra,\nPose:\nclose-up portrait, off-shoulde, sitting on executive desk, crossing legs, dynamic pose, looking at viewer\n"
+    },
+    "class_type": "ttN text",
+    "_meta": {
+      "title": "Positive"
+    }
+  },
+  "200:77": {
+    "inputs": {
+      "text": "score_4, score_5, score_6, (shaved head:1.5), (curly hair:1.5), (curly hairstyle:1.5), (cleavage:1.5), (exposed breasts:1.5), (long neck:1.5),\nfutanari, extra fingers, distorted hands, distorted fingers, deformed face, deformed hands, deformed fingers, poorly drawn face, poorly drawn hands, poorly drawn feet, bad anatomy, exaggerated anatomy, exaggerated limbs, exaggerated pose, long neck, twisted, symmetrical, mixed characters, low quality, lowres, low-resolution, worst quality, blurry, blur, distorted, distortion, bad, messy, old, sketch, draft, beginner, fake, hyper, glossy, aliasing, moir pattern, compression artifacts, jpeg artifacts, downsampling, pixelated, glitch, grainy, kitsch, black and white, lineless, censored, text, signature, watermark, logo, easynegative, multiple girls, 2girls, 3girls, group, duo, couple, extra people, extra limbs, additional characters, other humans"
+    },
+    "class_type": "ttN text",
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "200:160": {
+    "inputs": {
+      "pipe": [
+        "145:132",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "200:158": {
+    "inputs": {
+      "pipe": [
+        "200:160",
+        0
+      ],
+      "model": [
+        "200:159",
+        0
+      ],
+      "vae": [
+        "200:160",
+        5
+      ],
+      "clip": [
+        "200:159",
+        1
+      ]
+    },
+    "class_type": "easy pipeIn",
+    "_meta": {
+      "title": "Pipe In"
+    }
+  },
+  "200:153": {
+    "inputs": {
+      "pipe": [
+        "200:154:2",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "200:154:2": {
+    "inputs": {
+      "boolean": [
+        "200:154:1",
+        1
+      ],
+      "on_true": [
+        "200:154:1",
+        0
+      ],
+      "on_false": [
+        "200:158",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:154:1": {
+    "inputs": {
+      "signal": [
+        "206",
+        0
+      ],
+      "any_input": [
+        "206",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:154:8": {
+    "inputs": {
+      "preview": "True",
+      "previewMode": null,
+      "source": [
+        "200:154:1",
+        1
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "Предпросмотр любого"
+    }
+  },
+  "200:140:1": {
+    "inputs": {
+      "signal": [
+        "198",
+        0
+      ],
+      "any_input": [
+        "198",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:140:2": {
+    "inputs": {
+      "boolean": [
+        "200:140:1",
+        1
+      ],
+      "on_true": [
+        "200:140:1",
+        0
+      ],
+      "on_false": [
+        "200:82",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:165": {
+    "inputs": {
+      "sampler_name": "dpmpp_2m_sde"
+    },
+    "class_type": "Sampler Selector (Image Saver)",
+    "_meta": {
+      "title": "Sampler Selector (Image Saver)"
+    }
+  },
+  "200:167": {
+    "inputs": {
+      "string": [
+        "200:166",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "200:166": {
+    "inputs": {
+      "choice": "karras",
+      "option0": "karras",
+      "option1": "simple",
+      "option2": "normal",
+      "option3": ""
+    },
+    "class_type": "CustomCombo",
+    "_meta": {
+      "title": "Scheduler selector"
+    }
+  },
+  "200:163:2": {
+    "inputs": {
+      "boolean": [
+        "200:163:1",
+        1
+      ],
+      "on_true": [
+        "200:163:1",
+        0
+      ],
+      "on_false": [
+        "200:167",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:163:1": {
+    "inputs": {
+      "signal": [
+        "200:168",
+        0
+      ],
+      "any_input": [
+        "200:168",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:164:2": {
+    "inputs": {
+      "boolean": [
+        "200:164:1",
+        1
+      ],
+      "on_true": [
+        "200:164:1",
+        0
+      ],
+      "on_false": [
+        "200:165",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "200:164:1": {
+    "inputs": {
+      "signal": [
+        "240",
+        0
+      ],
+      "any_input": [
+        "240",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "200:168": {
+    "inputs": {
+      "string": [
+        "241",
+        0
+      ]
+    },
+    "class_type": "String To Combo JK",
+    "_meta": {
+      "title": "String To Combo JK🐉"
+    }
+  },
+  "63:80": {
+    "inputs": {
+      "image": "istockphoto-1204438215-612x612.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Загрузить изображение"
+    }
+  },
+  "63:78": {
+    "inputs": {
+      "boolean": [
+        "63:72",
+        1
+      ],
+      "on_true": [
+        "63:72",
+        0
+      ],
+      "on_false": [
+        "63:80",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "63:72": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "63:86": {
+    "inputs": {
+      "pipe": [
+        "170:152",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "147:80": {
+    "inputs": {
+      "image": "istockphoto-1204438215-612x612.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Загрузить изображение"
+    }
+  },
+  "147:78": {
+    "inputs": {
+      "boolean": [
+        "147:72",
+        1
+      ],
+      "on_true": [
+        "147:72",
+        0
+      ],
+      "on_false": [
+        "147:80",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "147:72": {
+    "inputs": {
+      "signal": [
+        "147:6",
+        0
+      ],
+      "any_input": [
+        "147:6",
+        0
+      ]
+    },
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "147:6": {
+    "inputs": {
+      "samples": [
+        "147:1",
+        0
+      ],
+      "vae": [
+        "147:86",
+        5
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Декодировать VAE"
+    }
+  },
+  "147:1": {
+    "inputs": {
+      "seed": [
+        "200:140:2",
+        0
+      ],
+      "steps": [
+        "200:144:2",
+        0
+      ],
+      "cfg": [
+        "200:143:2",
+        0
+      ],
+      "sampler_name": [
+        "200:164:2",
+        0
+      ],
+      "scheduler": [
+        "200:163:2",
+        0
+      ],
+      "denoise": 1,
+      "model": [
+        "147:86",
+        1
+      ],
+      "positive": [
+        "147:86",
+        2
+      ],
+      "negative": [
+        "147:86",
+        3
+      ],
+      "latent_image": [
+        "147:86",
+        4
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "147:86": {
+    "inputs": {
+      "pipe": [
+        "200:152",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "234:30": {
+    "inputs": {
+      "model": [
+        "234:31",
+        1
+      ],
+      "clip": [
+        "234:31",
+        6
+      ],
+      "vae": [
+        "234:31",
+        5
+      ],
+      "positive": [
+        "234:31",
+        2
+      ],
+      "negative": [
+        "234:31",
+        3
+      ]
+    },
+    "class_type": "ToBasicPipe",
+    "_meta": {
+      "title": "ToBasicPipe"
+    }
+  },
+  "234:31": {
+    "inputs": {
+      "pipe": [
+        "170:152",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "214:2": {
+    "inputs": {
+      "boolean": [
+        "214:1",
+        1
+      ],
+      "on_true": [
+        "214:1",
+        0
+      ],
+      "on_false": [
+        "147:78",
+        0
+      ]
+    },
+    "class_type": "easy ifElse",
+    "_meta": {
+      "title": "If else"
+    }
+  },
+  "214:1": {
+    "inputs": {},
+    "class_type": "ImpactIfNone",
+    "_meta": {
+      "title": "ImpactIfNone"
+    }
+  },
+  "214:8": {
+    "inputs": {
+      "preview": "False",
+      "previewMode": null,
+      "source": [
+        "214:1",
+        1
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "Предпросмотр любого"
+    }
+  },
+  "91:30": {
+    "inputs": {
+      "model": [
+        "91:31",
+        1
+      ],
+      "clip": [
+        "91:31",
+        6
+      ],
+      "vae": [
+        "91:31",
+        5
+      ],
+      "positive": [
+        "91:31",
+        2
+      ],
+      "negative": [
+        "91:31",
+        3
+      ]
+    },
+    "class_type": "ToBasicPipe",
+    "_meta": {
+      "title": "ToBasicPipe"
+    }
+  },
+  "91:31": {
+    "inputs": {
+      "pipe": [
+        "147:86",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  },
+  "153:31": {
+    "inputs": {
+      "pipe": [
+        "63:86",
+        0
+      ]
+    },
+    "class_type": "easy pipeOut",
+    "_meta": {
+      "title": "Pipe Out"
+    }
+  }
+}
