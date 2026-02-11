@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel, Field
 import uvicorn
 from validation.nodes_settings import *
+from config import API_HOST, API_PORT
 # Добавляем путь к модулям проекта
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -170,4 +171,4 @@ async def health_check():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host=API_HOST, port=API_PORT)

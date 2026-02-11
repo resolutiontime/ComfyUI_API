@@ -10,6 +10,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import base64
 from validation.workflow_processor import *
+from config import COMFYUI_HOST, COMFYUI_PORT
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,8 +21,8 @@ class LocalComfyUIClient:
 
     def __init__(
             self,
-            host: str = "localhost",
-            port: int = 8000,
+            host: str = COMFYUI_HOST,
+            port: int = COMFYUI_PORT,
             client_id: str = None
     ):
         self.base_url = f"http://{host}:{port}"
