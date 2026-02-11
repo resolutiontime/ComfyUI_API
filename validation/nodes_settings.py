@@ -5,8 +5,10 @@ from enum import Enum
 
 class ProcessType(str, Enum):
     PORTRAIT = "portrait"
+    PORTRAIT_DT = "portrait_dt"
     POSE = "pose"
-
+    POSE_DT = "pose_dt"
+    PORTRAIT_TO_POSE = "portrait_to_pose"
 
 class BaseProcessParams(BaseModel):
     """Базовые параметры для всех процессов"""
@@ -22,8 +24,6 @@ class PortraitParams(BaseProcessParams):
     """Специфичные параметры для портрета"""
     steps: int = Field(20, ge=18, le=30)
     cfg: float = Field(2, ge=1.5, le=4)
-
-
     prompt: str = "portrait of a person"
 #     negative_prompt: str = "blurry, bad quality"
 #     seed: int = -1
@@ -32,6 +32,7 @@ class PoseParams(BaseProcessParams):
     """Специфичные параметры для позы"""
     steps: int = Field(25, ge=18, le=30)
     cfg: float = Field(3, ge=1.5, le=4)
+    prompt: str = "Pose of a person"
 
 
 #     pose_image: Optional[str] = None

@@ -2,11 +2,13 @@ import aiohttp
 import asyncio
 import json
 import uuid
+from pathlib import Path
 from typing import Dict, Any, Optional
 import logging
 from PIL import Image
 from io import BytesIO
 import matplotlib.pyplot as plt
+import base64
 from validation.workflow_processor import *
 
 # Настройка логирования
@@ -25,6 +27,7 @@ class LocalComfyUIClient:
         self.base_url = f"http://{host}:{port}"
         self.ws_url = f"ws://{host}:{port}/ws"
         self.client_id = client_id or str(uuid.uuid4())
+        self.node_mapping = NodeMapping()
 
     async def queue_prompt(self, workflow: Dict[str, Any]) -> str:
         """Отправить промпт в очередь выполнения"""
@@ -75,13 +78,27 @@ class LocalComfyUIClient:
         plt.tight_layout()
         plt.show()
 
+    async def get_image_base64(self, image: bytes) -> str:
+        """Конвертирует изображение в base64 для передачи по сети"""
+        # Если image уже bytes (например, из ComfyUI)
+        if isinstance(image, bytes):
+            img = Image.open(BytesIO(image))
+        else:
+            img = image
+
+        # Конвертируем в base64
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+        return img_str
+
     async def get_image_from_history(self, history_data: Dict[str, Any]) -> Optional[str]:
         """Извлекает имя файла изображения из данных истории"""
         try:
             # Более гибкий поиск изображения в выводе
             for output_data in history_data.values():
                 if 'images' in output_data and output_data['images'] and output_data['images'][0]['subfolder'] != '':
-                    print(output_data['images'])
                     return output_data['images'][0]['filename'], output_data['images'][0]['subfolder']
 
             logger.warning("В выводе не найдено изображений")
@@ -115,7 +132,8 @@ class LocalComfyUIClient:
             self,
             prompt_id: str,
             timeout: float = 300.0,
-            progress_callback=None
+            progress_callback=None,
+            save_node_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Ожидать завершения выполнения через WebSocket"""
         ws_url = f"{self.ws_url}?clientId={self.client_id}"
@@ -126,7 +144,6 @@ class LocalComfyUIClient:
                 start = asyncio.get_event_loop().time()
 
                 async for msg in ws:
-                    # print(msg)
                     if asyncio.get_event_loop().time() - start > timeout:
                         raise TimeoutError("Job timed out")
 
@@ -152,12 +169,11 @@ class LocalComfyUIClient:
                         if progress_callback:
                             progress_callback(current, total)
                         else:
-                            print(f"Progress: {current}/{total}")
+                            logger.debug("Progress: %s/%s", current, total)
 
-                    # Я добавил!!)
                     elif msg_type == "progress_state":
-                        if (msg_data['prompt_id'] == prompt_id) & (msg_data.get('nodes', {}).get('230', {}).get('state',None) == 'finished'):
-                            print('Завершено!!!')
+                        if save_node_id and (msg_data.get('prompt_id') == prompt_id) and (msg_data.get('nodes', {}).get(save_node_id, {}).get('state') == 'finished'):
+                            logger.info("Workflow node %s finished", save_node_id)
                             # Дополнительно получаем полную историю
                             history = await self.get_history(prompt_id)
                             if history and prompt_id in history:
@@ -180,7 +196,7 @@ class LocalComfyUIClient:
                         raise RuntimeError(f"Execution failed: {error_msg}")
 
                     elif msg_type == "execution_cached":
-                        print("Execution was served from cache")
+                        logger.info("Execution was served from cache")
                         history = await self.get_history(prompt_id)
                         if history and prompt_id in history:
                             outputs.update(history[prompt_id].get("outputs", {}))
@@ -198,11 +214,12 @@ class LocalComfyUIClient:
         # Отправляем промпт
         prompt_id = await self.queue_prompt(workflow)
 
-        # Ожидаем завершения
+        # Ожидаем завершения (save_node_id не известен для произвольного workflow)
         outputs = await self.wait_for_completion(
             prompt_id,
             timeout,
-            progress_callback
+            progress_callback,
+            save_node_id=None,
         )
 
         filename, subfolder = await self.get_image_from_history(outputs)
@@ -210,13 +227,66 @@ class LocalComfyUIClient:
 
         return img
 
+
+    async def execute_workflow2(
+            self,
+            process_type: ProcessType,
+            timeout: float = 300.0,
+            params: dict = None,
+
+    ) -> Dict[str, Any]:
+
+        process_name = process_type
+        base_dir = Path(__file__).resolve().parent.parent / "workflows"
+        path_mngr = WorkflowPathManager(base_dir=base_dir)
+        workflow = path_mngr.load_workflow(process_name)
+
+        save_node_id = self.node_mapping.get_save_node_id(process_name)
+        logger.debug("save_node_id=%s", save_node_id)
+        # Обрабатываем workflow
+        processed_workflow = WorkflowFactory.process(
+            process_type=process_name,
+            params=params,
+            workflow_template=workflow
+        )
+
+        # Отправляем промпт
+        prompt_id = await self.queue_prompt(processed_workflow)
+
+        # Ожидаем завершения
+        outputs = await self.wait_for_completion(
+            prompt_id,
+            timeout,
+            progress_callback=None,
+            save_node_id=save_node_id,
+        )
+
+        filename, subfolder = await self.get_image_from_history(outputs)
+        if filename is None:
+            raise RuntimeError("В выводе workflow не найдено изображения")
+        img = await self.get_image(filename, subfolder or "")
+
+        return await self.get_image_base64(img)
+
+
 if __name__ == '__main__':
     client = LocalComfyUIClient()
 
-    process = ProcessType.PORTRAIT
-    path_mngr = WorkflowPathManager(base_dir='../workflows')
-    workflow = path_mngr.load_workflow(process)
+    # process = ProcessType.PORTRAIT
+    # path_mngr = WorkflowPathManager(base_dir='../workflows')
+    # workflow = path_mngr.load_workflow(process)
+    #
+    # img = asyncio.run(client.execute_workflow(workflow, 20))
+    # asyncio.run(client.display_image(img))
 
-    img = asyncio.run(client.execute_workflow(workflow, 20))
-    asyncio.run(client.display_image(img))
+    # Создаем параметры
+    params = {
+        "width": 896,
+        "height": 1216,
+        # "cfg": 3,
+        # "steps": 15,
+        "prompt": "open mouth",
+        "seed": 47
+    }
 
+    asyncio.run(client.execute_workflow2(ProcessType.PORTRAIT_DT, params=params, timeout=15))

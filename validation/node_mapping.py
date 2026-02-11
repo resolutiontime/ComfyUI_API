@@ -1,4 +1,5 @@
 from validation.nodes_settings import *
+import copy
 
 
 class NodeMapping:
@@ -30,6 +31,25 @@ class NodeMapping:
             "negative_prompt": {"node_id": 165, "input_name": "text"},
         }}
 
+    MAPPINGS[ProcessType.POSE_DT] = copy.deepcopy(MAPPINGS[ProcessType.POSE])
+    MAPPINGS[ProcessType.PORTRAIT_DT] = copy.deepcopy(MAPPINGS[ProcessType.PORTRAIT])
+
+    MAPPINGS[ProcessType.POSE].update({'save_node_id':'244'})
+    MAPPINGS[ProcessType.POSE_DT].update({'save_node_id':'245'})
+    MAPPINGS[ProcessType.PORTRAIT].update({'save_node_id':'230'})
+    MAPPINGS[ProcessType.PORTRAIT_DT].update({'save_node_id':'243'})
+
+
     @classmethod
     def get_mapping(cls, process_type: ProcessType) -> Dict:
         return cls.MAPPINGS.get(process_type, {})
+
+    @classmethod
+    def get_save_node_id(cls, process_type: ProcessType):
+        return cls.MAPPINGS.get(process_type, {}).get('save_node_id')
+
+
+if __name__ == '__main__':
+    obj = NodeMapping()
+
+    print(obj.get_mapping(ProcessType.POSE))

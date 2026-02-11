@@ -1,5 +1,7 @@
-from validation.nodes_settings import *
 from pathlib import Path
+from typing import Union
+
+from validation.nodes_settings import *
 import json
 
 class WorkflowPathManager:
@@ -7,12 +9,16 @@ class WorkflowPathManager:
 
     # Базовые пути по умолчанию
     DEFAULT_PATHS = {
-        ProcessType.PORTRAIT: "Generate_portrait_API.json",
-        ProcessType.POSE: "Generate_pose_API.json",
+        ProcessType.PORTRAIT: "Portrait_wrkflw.json",
+        ProcessType.PORTRAIT_DT: "Portrait_deteiler_wrkflw.json",
+        ProcessType.POSE: "Pose_wrkflw.json",
+        ProcessType.POSE_DT: "Pose_detailer_wrkflw.json",
+        ProcessType.PORTRAIT_TO_POSE: "Pose_detailer_from_portrait_wrkflw.json",
+
     }
 
-    def __init__(self, base_dir: str = "workflows", custom_paths: Dict[ProcessType, str] = None):
-        self.base_dir = Path(base_dir)
+    def __init__(self, base_dir: Union[str, Path] = "workflows", custom_paths: Dict[ProcessType, str] = None):
+        self.base_dir = Path(base_dir) if not isinstance(base_dir, Path) else base_dir
         self.paths = self.DEFAULT_PATHS.copy()
 
         if custom_paths:
@@ -30,7 +36,6 @@ class WorkflowPathManager:
             return path
 
         # Иначе ищем относительно base_dir
-        print("www")
         return self.base_dir / path
 
     def load_workflow(self, process_type: ProcessType) -> Dict[str, Any]:
