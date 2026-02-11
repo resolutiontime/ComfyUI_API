@@ -5,9 +5,9 @@ import sys
 from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import uvicorn
-
+from validation.nodes_settings import *
 # Добавляем путь к модулям проекта
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,22 +23,50 @@ app = FastAPI(
 )
 
 
-class WorkflowRequest(BaseModel):
-    """Модель запроса для выполнения workflow"""
-    timeout: int = 20
-    params: Optional[dict] = None
+class PortraitRequest(BaseModel):
+    """Запрос на генерацию портрета."""
+    timeout: int = Field(20, description="Таймаут выполнения workflow в секундах")
+    params: PortraitParams = Field(  # type: ignore[name-defined]
+        default_factory=PortraitParams,
+        description="Параметры генерации портрета (дефолты см. в PortraitParams)",
+    )
 
-    def get_params(self) -> dict:
-        if self.params is not None:
-            return self.params
-        return {
-            "width": 896,
-            "height": 1216,
-            "cfg": 3,
-            "steps": 18,
-            "prompt": "open mouth",
-            "seed": 46,
-        }
+
+class PoseRequest(BaseModel):
+    """Запрос на генерацию позы."""
+    timeout: int = Field(20, description="Таймаут выполнения workflow в секундах")
+    params: PoseParams = Field(  # type: ignore[name-defined]
+        default_factory=PoseParams,
+        description="Параметры генерации позы (дефолты см. в PoseParams)",
+    )
+
+
+class PoseDetailRequest(BaseModel):
+    """Запрос на генерацию позы с детайлером."""
+    timeout: int = Field(20, description="Таймаут выполнения workflow в секундах")
+    params: PoseParams = Field(  # type: ignore[name-defined]
+        default_factory=PoseParams,
+        description="Параметры генерации позы для детайлера (дефолты см. в PoseParams)",
+    )
+
+
+# class WorkflowRequest():
+#     """Модель запроса для выполнения workflow"""
+#     timeout: int = 20
+#     params: PortraitParams().model_dump()
+#
+#     # process_type: ProcessType
+#     # def get_params(self) -> dict:
+#     #     if self.params is not None:
+#     #         return self.params
+#     #     return {
+#     #         "width": 896,
+#     #         "height": 1216,
+#     #         "cfg": 3,
+#     #         "steps": 18,
+#     #         "prompt": "open mouth",
+#     #         "seed": 46,
+#     #     }
 
 
 def _result_to_image_bytes(result: Any) -> bytes:
@@ -60,13 +88,17 @@ def _result_to_image_bytes(result: Any) -> bytes:
 
 async def _run_workflow_and_return_image(
     process_type: ProcessType,
-    request: WorkflowRequest,
+    params: BaseModel,
+    timeout: int,
     service: LocalComfyUIClient,
 ) -> Response:
+    """Общий помощник: выполняет workflow и возвращает PNG-изображение."""
+    print("CLIENT ID: ", service.client_id)
+
     result = await service.execute_workflow2(
         process_type=process_type,
-        params=request.get_params(),
-        timeout=request.timeout,
+        params=params.model_dump(),
+        timeout=timeout,
     )
     image_bytes = _result_to_image_bytes(result)
     filename = f"{process_type.value}.png"
@@ -76,64 +108,57 @@ async def _run_workflow_and_return_image(
         headers={"Content-Disposition": f"inline; filename={filename}"},
     )
 
-#
-# @app.post("/api/v1/get_portait")
-# async def execute_workflow(request: WorkflowRequest):
-#     """
-#     params default:
-#     "width": 896,
-#     "height": 1216,
-#     "cfg": 3,
-#     "steps": 15,
-#     "prompt": "open mouth",
-#     "seed": 46
-#     """
-#     try:
-#         # Вызов вашего существующего сервиса
-#         result = await service.execute_workflow3(
-#             params=request.params,
-#             timeout=request.timeout
-#         )
-#
-#         return {
-#             "status": "success",
-#             "message": "Workflow выполнен успешно",
-#             "data": result
-#         }
-#
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
-
-@app.post("/api/v1/get_portait/image",
-          responses={200: {"content": {"image/png": {}}, "description": "Возвращает PNG изображение"}})
-async def get_portrait_image(request: WorkflowRequest):
+@app.post(
+    "/api/v1/get_portait/image",
+    responses={200: {"content": {"image/png": {}}, "description": "Возвращает PNG изображение"}},
+)
+async def get_portrait_image(request: PortraitRequest):
     """Возвращает изображение портрета (отображается в Swagger UI)."""
     service = LocalComfyUIClient()
     try:
-        return await _run_workflow_and_return_image(ProcessType.PORTRAIT, request, service)
+        return await _run_workflow_and_return_image(
+            ProcessType.PORTRAIT,
+            params=request.params,
+            timeout=request.timeout,
+            service=service,
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/api/v1/get_pose/image",
-          responses={200: {"content": {"image/png": {}}, "description": "Возвращает PNG изображение"}})
-async def get_pose_image(request: WorkflowRequest):
+@app.post(
+    "/api/v1/get_pose/image",
+    responses={200: {"content": {"image/png": {}}, "description": "Возвращает PNG изображение"}},
+)
+async def get_pose_image(request: PoseRequest):
     """Возвращает изображение позы (отображается в Swagger UI)."""
     service = LocalComfyUIClient()
     try:
-        return await _run_workflow_and_return_image(ProcessType.POSE, request, service)
+        return await _run_workflow_and_return_image(
+            ProcessType.POSE,
+            params=request.params,
+            timeout=request.timeout,
+            service=service,
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/api/v1/get_pose_dt/image",
-          responses={200: {"content": {"image/png": {}}, "description": "Возвращает PNG изображение"}})
-async def get_pose_dt_image(request: WorkflowRequest):
+@app.post(
+    "/api/v1/get_pose_dt/image",
+    responses={200: {"content": {"image/png": {}}, "description": "Возвращает PNG изображение"}},
+)
+async def get_pose_dt_image(request: PoseDetailRequest):
     """Возвращает изображение позы с детайлером (отображается в Swagger UI)."""
     service = LocalComfyUIClient()
     try:
-        return await _run_workflow_and_return_image(ProcessType.POSE_DT, request, service)
+        return await _run_workflow_and_return_image(
+            ProcessType.POSE_DT,
+            params=request.params,
+            timeout=request.timeout,
+            service=service,
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
