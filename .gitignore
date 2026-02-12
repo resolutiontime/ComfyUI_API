@@ -6,3 +6,8 @@ env/
 # Кеш Python
 __pycache__/
 */__pycache__/
+
+# Переменные окружения (содержат пароли и секреты)
+.env
+.env.local
+.env.*.local
