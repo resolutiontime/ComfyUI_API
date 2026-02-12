@@ -51,25 +51,6 @@ class PoseDetailRequest(BaseModel):
     )
 
 
-# class WorkflowRequest():
-#     """Модель запроса для выполнения workflow"""
-#     timeout: int = 20
-#     params: PortraitParams().model_dump()
-#
-#     # process_type: ProcessType
-#     # def get_params(self) -> dict:
-#     #     if self.params is not None:
-#     #         return self.params
-#     #     return {
-#     #         "width": 896,
-#     #         "height": 1216,
-#     #         "cfg": 3,
-#     #         "steps": 18,
-#     #         "prompt": "open mouth",
-#     #         "seed": 46,
-#     #     }
-
-
 def _result_to_image_bytes(result: Any) -> bytes:
     """Преобразует результат execute_workflow2 (str base64 или bytes) в байты изображения."""
     if isinstance(result, bytes):
