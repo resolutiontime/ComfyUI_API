@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: ${MONGO_IMAGE:-mongo:7}
+    container_name: ${MONGO_CONTAINER_NAME:-comfyui-mongo}
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-root_password_change_me}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-comfyui}
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+    driver: local
+
