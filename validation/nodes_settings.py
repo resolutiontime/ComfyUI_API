@@ -18,6 +18,7 @@ class BaseProcessParams(BaseModel):
     seed: int = Field(1)
     sampler: str = Field('dpmpp_2m_sde')
     scheduler: str = Field('karras')
+    lora_settings: dict = {'1':1s,'2':2}
 
 
 class PortraitParams(BaseProcessParams):

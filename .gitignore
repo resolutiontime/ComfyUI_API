@@ -3,9 +3,11 @@
 venv/
 env/
 
-# Кеш Python
+# Кеш Python (любая вложенность)
 __pycache__/
-*/__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
 
 # Переменные окружения (содержат пароли и секреты)
 .env

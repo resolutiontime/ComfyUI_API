@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import json
 import uuid
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Any, Optional
 import logging
@@ -15,6 +16,18 @@ from config import COMFYUI_HOST, COMFYUI_PORT
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ExecuteWorkflowResult:
+    """Результат выполнения workflow: изображение и метаданные для логирования."""
+    image: str
+    client_id: str
+    prompt_id: str
+    processed_workflow: Dict[str, Any]
+    params: Dict[str, Any]
+    process_type: ProcessType
+
 
 class LocalComfyUIClient:
     """Клиент для локального ComfyUI сервера"""
@@ -214,7 +227,7 @@ class LocalComfyUIClient:
         """Выполнить workflow и дождаться результата"""
         # Отправляем промпт
         prompt_id = await self.queue_prompt(workflow)
-
+        print(prompt_id)
         # Ожидаем завершения (save_node_id не известен для произвольного workflow)
         outputs = await self.wait_for_completion(
             prompt_id,
@@ -252,11 +265,11 @@ class LocalComfyUIClient:
         )
 
         # Отправляем промпт
-        prompt_id = await self.queue_prompt(processed_workflow)
-
+        self.prompt_id = await self.queue_prompt(processed_workflow)
+        print(self.prompt_id)
         # Ожидаем завершения
         outputs = await self.wait_for_completion(
-            prompt_id,
+            self.prompt_id,
             timeout,
             progress_callback=None,
             save_node_id=save_node_id,
@@ -266,8 +279,16 @@ class LocalComfyUIClient:
         if filename is None:
             raise RuntimeError("В выводе workflow не найдено изображения")
         img = await self.get_image(filename, subfolder or "")
+        image_b64 = await self.get_image_base64(img)
 
-        return await self.get_image_base64(img)
+        return ExecuteWorkflowResult(
+            image=image_b64,
+            client_id=self.client_id,
+            prompt_id=self.prompt_id,
+            processed_workflow=processed_workflow,
+            params=params or {},
+            process_type=process_name,
+        )
 
 
 if __name__ == '__main__':
@@ -287,7 +308,9 @@ if __name__ == '__main__':
         # "cfg": 3,
         # "steps": 15,
         "prompt": "open mouth",
-        "seed": 47
+        "seed": 10
     }
-
-    asyncio.run(client.execute_workflow2(ProcessType.PORTRAIT_DT, params=params, timeout=15))
+    try:
+        asyncio.run(client.execute_workflow2(ProcessType.PORTRAIT_DT, params=params, timeout=15))
+    except:
+        print(asyncio.run(client.get_history(client.prompt_id)))

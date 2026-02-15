@@ -34,9 +34,10 @@ MONGO_PASSWORD: str = os.getenv("MONGO_PASSWORD", "root_password_change_me")
 def get_mongo_uri() -> str:
     """
     Возвращает URI подключения к MongoDB по переменным окружения.
-    Формат: mongodb://user:password@host:port/db
+    Формат: mongodb://user:password@host:port/db?authSource=admin
+    Root-пользователь из MONGO_INITDB_* создаётся в базе admin — указываем authSource=admin.
     Логин и пароль кодируются через quote_plus (спецсимволы @, :, /, % и т.д. не ломают URI).
     """
     user = quote_plus(MONGO_USER)
     password = quote_plus(MONGO_PASSWORD)
-    return f"mongodb://{user}:{password}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB_NAME}"
+    return f"mongodb://{user}:{password}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB_NAME}?authSource=admin"
