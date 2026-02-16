@@ -11,6 +11,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel, Field
 import uvicorn
+from typing import List
 from validation.nodes_settings import *
 from config import API_HOST, API_PORT
 # Корень проекта для импорта repositories, services, config и т.д.
@@ -42,8 +43,56 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="ComfyUI Workflow API",
-    description="API для выполнения workflow ComfyUI",
-    version="1.0.0",
+    description="""
+API для выполнения workflow ComfyUI.
+
+## Lora Settings
+
+Все эндпоинты поддерживают настройку Lora через параметр `lora_settings`:
+
+### Пресеты (быстрый способ):
+```json
+{
+  "params": {
+    "lora_settings": {
+      "preset": "realistic"
+    }
+  }
+}
+```
+
+Доступные пресеты: `none`, `realistic`, `cartoon`, `beauty`, `custom`
+
+### Кастомные Lora (полный контроль):
+```json
+{
+  "params": {
+    "lora_settings": {
+      "preset": "custom",
+      "lora_slots": [
+        {"on": true, "lora": "Pony\\\\Realism_slider.safetensors", "strength": 0.8},
+        {"on": true, "lora": "Pony\\\\Real_Beauty.safetensors", "strength": 0.6}
+      ]
+    }
+  }
+}
+```
+
+### Пресет + дополнительные Lora:
+```json
+{
+  "params": {
+    "lora_settings": {
+      "preset": "realistic",
+      "lora_slots": [
+        {"on": true, "lora": "Pony\\\\Skin Color_alpha1.0.safetensors", "strength": -1.5}
+      ]
+    }
+  }
+}
+```
+""",
+    version="1.1.0",
     lifespan=lifespan,
 )
 
@@ -231,7 +280,161 @@ async def get_pose_dt_image(request: PoseDetailRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/v1/health")
+# =============================================================================
+# Models Info Endpoints
+# =============================================================================
+
+@app.get(
+    "/api/v1/models/loras",
+    response_model=List[str],
+    tags=["Models"],
+    summary="Получить список доступных Lora",
+)
+async def get_loras_list():
+    """
+    Возвращает список всех доступных Lora файлов из ComfyUI.
+    
+    Пути можно использовать напрямую в `lora_settings.lora_slots[].lora`
+    
+    Пример ответа:
+    ```json
+    [
+        "Pony\\Realism_slider.safetensors",
+        "Pony\\Real_Beauty.safetensors",
+        "Pony\\Cartoon\\ExpressiveH (Hentai LoRa Style).safetensors"
+    ]
+    ```
+    """
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_loras()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get loras: {str(e)}")
+
+
+@app.get(
+    "/api/v1/models/checkpoints",
+    response_model=List[str],
+    tags=["Models"],
+    summary="Получить список доступных Checkpoint моделей",
+)
+async def get_checkpoints_list():
+    """
+    Возвращает список всех доступных checkpoint моделей из ComfyUI.
+    
+    Пример ответа:
+    ```json
+    [
+        "Pony\\cyberrealistic\\v160.safetensors",
+        "sd_xl_base_1.0.safetensors"
+    ]
+    ```
+    """
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_checkpoints()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get checkpoints: {str(e)}")
+
+
+@app.get(
+    "/api/v1/models/vae",
+    response_model=List[str],
+    tags=["Models"],
+    summary="Получить список доступных VAE моделей",
+)
+async def get_vae_list():
+    """Возвращает список всех доступных VAE моделей из ComfyUI."""
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_vaes()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get VAE models: {str(e)}")
+
+
+@app.get(
+    "/api/v1/models/embeddings",
+    response_model=List[str],
+    tags=["Models"],
+    summary="Получить список доступных Embeddings",
+)
+async def get_embeddings_list():
+    """Возвращает список всех доступных embeddings из ComfyUI."""
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_embeddings()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get embeddings: {str(e)}")
+
+
+@app.get(
+    "/api/v1/models/folders",
+    response_model=List[str],
+    tags=["Models"],
+    summary="Получить список типов моделей (папок)",
+)
+async def get_model_folders():
+    """
+    Возвращает список всех типов моделей (названия папок) из ComfyUI.
+    
+    Можно использовать для получения моделей конкретного типа через 
+    `/api/v1/models/{folder}`
+    
+    Пример ответа:
+    ```json
+    ["checkpoints", "loras", "vae", "embeddings", "controlnet", "upscale_models"]
+    ```
+    """
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_model_folders()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get model folders: {str(e)}")
+
+
+@app.get(
+    "/api/v1/models/{folder}",
+    response_model=List[str],
+    tags=["Models"],
+    summary="Получить список моделей в указанной папке",
+)
+async def get_models_in_folder(folder: str):
+    """
+    Возвращает список моделей в указанной папке.
+    
+    Args:
+        folder: Название папки (loras, checkpoints, vae, embeddings, controlnet, etc.)
+    
+    Пример: `/api/v1/models/controlnet`
+    """
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_models_in_folder(folder)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get models in folder '{folder}': {str(e)}")
+
+
+@app.get(
+    "/api/v1/system/stats",
+    tags=["System"],
+    summary="Получить информацию о системе ComfyUI",
+)
+async def get_system_stats():
+    """
+    Возвращает информацию о системе ComfyUI (python version, devices, VRAM, etc.)
+    """
+    service = LocalComfyUIClient()
+    try:
+        return await service.get_system_stats()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get system stats: {str(e)}")
+
+
+# =============================================================================
+# Health Check
+# =============================================================================
+
+@app.get("/api/v1/health", tags=["System"])
 async def health_check():
     """Проверка работоспособности сервиса"""
     return {"status": "healthy", "service": "ComfyUI Workflow API"}

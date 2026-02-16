@@ -4,7 +4,7 @@ import json
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import logging
 from PIL import Image
 from io import BytesIO
@@ -142,6 +142,96 @@ class LocalComfyUIClient:
                     return result.get('name', filename)
                 raise RuntimeError(f"Failed to upload image: {resp.status}")
 
+    # =========================================================================
+    # Model Info API (ComfyUI /models endpoints)
+    # =========================================================================
+
+    async def get_model_folders(self) -> List[str]:
+        """
+        Получить список типов моделей (папок).
+        ComfyUI endpoint: GET /models
+        
+        Returns:
+            List[str]: Список названий папок моделей (loras, checkpoints, vae, etc.)
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{self.base_url}/models") as resp:
+                if resp.status == 200:
+                    return await resp.json()
+                raise RuntimeError(f"Failed to get model folders: {resp.status}")
+
+    async def get_models_in_folder(self, folder: str) -> List[str]:
+        """
+        Получить список моделей в конкретной папке.
+        ComfyUI endpoint: GET /models/{folder}
+        
+        Args:
+            folder: Название папки (loras, checkpoints, vae, embeddings, etc.)
+            
+        Returns:
+            List[str]: Список путей к моделям в папке
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{self.base_url}/models/{folder}") as resp:
+                if resp.status == 200:
+                    return await resp.json()
+                raise RuntimeError(f"Failed to get models in folder '{folder}': {resp.status}")
+
+    async def get_loras(self) -> List[str]:
+        """
+        Получить список всех доступных Lora.
+        
+        Returns:
+            List[str]: Список путей к Lora файлам
+        """
+        return await self.get_models_in_folder("loras")
+
+    async def get_checkpoints(self) -> List[str]:
+        """
+        Получить список всех доступных checkpoint моделей.
+        
+        Returns:
+            List[str]: Список путей к checkpoint файлам
+        """
+        return await self.get_models_in_folder("checkpoints")
+
+    async def get_vaes(self) -> List[str]:
+        """
+        Получить список всех доступных VAE моделей.
+        
+        Returns:
+            List[str]: Список путей к VAE файлам
+        """
+        return await self.get_models_in_folder("vae")
+
+    async def get_embeddings(self) -> List[str]:
+        """
+        Получить список всех доступных embeddings.
+        ComfyUI endpoint: GET /embeddings
+        
+        Returns:
+            List[str]: Список названий embeddings
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{self.base_url}/embeddings") as resp:
+                if resp.status == 200:
+                    return await resp.json()
+                raise RuntimeError(f"Failed to get embeddings: {resp.status}")
+
+    async def get_system_stats(self) -> Dict[str, Any]:
+        """
+        Получить информацию о системе (python version, devices, vram etc).
+        ComfyUI endpoint: GET /system_stats
+        
+        Returns:
+            Dict: Информация о системе
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{self.base_url}/system_stats") as resp:
+                if resp.status == 200:
+                    return await resp.json()
+                raise RuntimeError(f"Failed to get system stats: {resp.status}")
+
     async def wait_for_completion(
             self,
             prompt_id: str,
@@ -265,11 +355,11 @@ class LocalComfyUIClient:
         )
 
         # Отправляем промпт
-        self.prompt_id = await self.queue_prompt(processed_workflow)
-        print(self.prompt_id)
+        prompt_id = await self.queue_prompt(processed_workflow)
+
         # Ожидаем завершения
         outputs = await self.wait_for_completion(
-            self.prompt_id,
+            prompt_id,
             timeout,
             progress_callback=None,
             save_node_id=save_node_id,
@@ -284,7 +374,7 @@ class LocalComfyUIClient:
         return ExecuteWorkflowResult(
             image=image_b64,
             client_id=self.client_id,
-            prompt_id=self.prompt_id,
+            prompt_id=prompt_id,
             processed_workflow=processed_workflow,
             params=params or {},
             process_type=process_name,
@@ -293,14 +383,6 @@ class LocalComfyUIClient:
 
 if __name__ == '__main__':
     client = LocalComfyUIClient()
-
-    # process = ProcessType.PORTRAIT
-    # path_mngr = WorkflowPathManager(base_dir='../workflows')
-    # workflow = path_mngr.load_workflow(process)
-    #
-    # img = asyncio.run(client.execute_workflow(workflow, 20))
-    # asyncio.run(client.display_image(img))
-
     # Создаем параметры
     params = {
         "width": 896,
@@ -308,9 +390,7 @@ if __name__ == '__main__':
         # "cfg": 3,
         # "steps": 15,
         "prompt": "open mouth",
-        "seed": 10
+        "seed": 47
     }
-    try:
-        asyncio.run(client.execute_workflow2(ProcessType.PORTRAIT_DT, params=params, timeout=15))
-    except:
-        print(asyncio.run(client.get_history(client.prompt_id)))
+
+    asyncio.run(client.execute_workflow2(ProcessType.PORTRAIT_DT, params=params, timeout=15))

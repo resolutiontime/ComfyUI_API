@@ -1,5 +1,9 @@
 from validation.node_mapping import *
 from validation.path_manager import *
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class WorkflowProcessor:
     def __init__(self, base_workflow: Dict[str, Any]):
@@ -7,10 +11,17 @@ class WorkflowProcessor:
         self.node_mapping = NodeMapping()
 
     def process(self, params, process_type: ProcessType) -> Dict[str, Any]:
-        """Обработка workflow для генерации позы"""
+        """Обработка workflow: применение параметров и Lora настроек"""
         workflow = self._deep_copy_workflow()
         mapping = self.node_mapping.get_mapping(process_type)
-        return self._apply_params_to_workflow(workflow, params, mapping)
+        
+        # Применяем базовые параметры
+        workflow = self._apply_params_to_workflow(workflow, params, mapping)
+        
+        # Применяем Lora настройки
+        workflow = self._apply_lora_settings(workflow, params, process_type)
+        
+        return workflow
 
     def _apply_params_to_workflow(
             self,
@@ -39,6 +50,80 @@ class WorkflowProcessor:
                 else:
                     print(f"Warning: Node {node_id} not found in workflow")
 
+        return workflow
+
+    def _apply_lora_settings(
+            self,
+            workflow: Dict[str, Any],
+            params: BaseModel,
+            process_type: ProcessType
+    ) -> Dict[str, Any]:
+        """
+        Применение Lora настроек к workflow.
+        
+        Заменяет все lora_X слоты в ноде Power Lora Loader на переданные настройки.
+        """
+        # Получаем lora_settings из params
+        lora_settings: Optional[LoraSettings] = getattr(params, 'lora_settings', None)
+        
+        if lora_settings is None:
+            return workflow
+        
+        # Получаем список Lora слотов (пресет + кастомные)
+        lora_slots: List[LoraSlot] = lora_settings.get_all_lora_slots()
+        
+        if not lora_slots:
+            # Если список пуст и preset=NONE — выключаем все Lora в ноде
+            if lora_settings.preset == LoraPreset.NONE:
+                return self._disable_all_lora(workflow, process_type)
+            return workflow
+        
+        # Получаем node_id ноды Power Lora Loader
+        lora_node_id = self.node_mapping.get_lora_node_id(process_type)
+        if not lora_node_id:
+            logger.warning(f"Lora node_id not found for process_type: {process_type}")
+            return workflow
+        
+        if lora_node_id not in workflow:
+            logger.warning(f"Lora node {lora_node_id} not found in workflow")
+            return workflow
+        
+        lora_node_inputs = workflow[lora_node_id]["inputs"]
+        
+        # Сначала выключаем все существующие Lora слоты
+        for key in list(lora_node_inputs.keys()):
+            if key.startswith("lora_") and isinstance(lora_node_inputs[key], dict):
+                lora_node_inputs[key]["on"] = False
+        
+        # Применяем переданные Lora слоты
+        for i, lora_slot in enumerate(lora_slots, start=1):
+            slot_key = f"lora_{i}"
+            lora_node_inputs[slot_key] = {
+                "on": lora_slot.on,
+                "lora": lora_slot.lora,
+                "strength": lora_slot.strength
+            }
+            logger.debug(f"Applied Lora slot {slot_key}: {lora_slot.lora} (strength={lora_slot.strength}, on={lora_slot.on})")
+        
+        return workflow
+    
+    def _disable_all_lora(
+            self,
+            workflow: Dict[str, Any],
+            process_type: ProcessType
+    ) -> Dict[str, Any]:
+        """Выключает все Lora в ноде Power Lora Loader"""
+        lora_node_id = self.node_mapping.get_lora_node_id(process_type)
+        if not lora_node_id or lora_node_id not in workflow:
+            return workflow
+        
+        lora_node_inputs = workflow[lora_node_id]["inputs"]
+        
+        for key in list(lora_node_inputs.keys()):
+            if key.startswith("lora_") and isinstance(lora_node_inputs[key], dict):
+                lora_node_inputs[key]["on"] = False
+        
+        logger.debug(f"Disabled all Lora in node {lora_node_id}")
         return workflow
 
     def _deep_copy_workflow(self) -> Dict[str, Any]:

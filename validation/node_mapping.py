@@ -1,5 +1,6 @@
 from validation.nodes_settings import *
 import copy
+from typing import List
 
 
 class NodeMapping:
@@ -39,6 +40,14 @@ class NodeMapping:
     MAPPINGS[ProcessType.PORTRAIT].update({'save_node_id':'230'})
     MAPPINGS[ProcessType.PORTRAIT_DT].update({'save_node_id':'243'})
 
+    # Маппинг Lora нод для каждого ProcessType
+    # node_id ноды "Power Lora Loader (rgthree)" в workflow
+    LORA_NODE_MAPPING: Dict[ProcessType, str] = {
+        ProcessType.PORTRAIT: "186",
+        ProcessType.PORTRAIT_DT: "186",
+        ProcessType.POSE: "205",
+        ProcessType.POSE_DT: "205",
+    }
 
     @classmethod
     def get_mapping(cls, process_type: ProcessType) -> Dict:
@@ -47,6 +56,11 @@ class NodeMapping:
     @classmethod
     def get_save_node_id(cls, process_type: ProcessType):
         return cls.MAPPINGS.get(process_type, {}).get('save_node_id')
+
+    @classmethod
+    def get_lora_node_id(cls, process_type: ProcessType) -> Optional[str]:
+        """Возвращает node_id ноды Power Lora Loader для данного ProcessType"""
+        return cls.LORA_NODE_MAPPING.get(process_type)
 
 
 if __name__ == '__main__':
